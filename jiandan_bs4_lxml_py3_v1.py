@@ -1,25 +1,13 @@
-from bs4 import BeautifulSoup
-import requests
-import time
-import os
-'''
-url = 'http://weheartit.com/inspirations/taylorswift'
-wb_data = requests.get(url)
-soup = BeautifulSoup(wb_data.text,'lxml')
-print(soup)
-'''
-
-
 # -*- coding: utf-8 -*-
 """
 Created on 2016/06/02
 @author: zenway33
 """
 
-
 from bs4 import BeautifulSoup
 import requests
 import time
+import random
 import os
 
 
@@ -29,9 +17,34 @@ path = os.path.join(path,'jiandanxxoo')
 if not os.path.exists(path):
     os.mkdir(path)
 
+#random user-agent
+#def LoadUserAgents(uafile=USER_AGENTS_FILE):
+def LoadUserAgents(uafile="user_agents.txt"):
+    """
+    uafile : string
+        path to text file of user agents, one per line
+    """
+    uas = []
+    with open(uafile, 'rb') as uaf:
+        for ua in uaf.readlines():
+            if ua:
+                uas.append(ua.strip()[1:-1-1])
+    random.shuffle(uas)
+    return uas
+
+# load the user agents, in random order
+user_agents = LoadUserAgents(uafile="user_agents.txt")
+
+# load user agents and set headers
+uas = LoadUserAgents()
+ua = random.choice(uas)  # select a random user agent
+#proxy = {"http": "http://username:p3ssw0rd@10.10.1.10:3128"}
+
+print(ua)
 
 headers = {
-       'User-Agent': 'Mozilla/5.8 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'User-Agent': ua,
+       #'User-Agent': 'Mozilla/5.8 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
        'Accept-Encoding': 'none',
@@ -60,7 +73,7 @@ def download(url):
     print("%s ... is download" % url)
 
 #下载图片,输入年限如 2003,2006（年的图片）
-for page_num in range(1997,2008):
+for page_num in range(1800,2008):
     wb_data =requests.get('http://jandan.net/ooxx/page-{}'.format(page_num), headers=headers)
     time.sleep(5)
     soup = BeautifulSoup(wb_data.text,'lxml')
@@ -71,7 +84,7 @@ for page_num in range(1997,2008):
         url = img_url.get('src')
         #file_name = url.split('/')[-1]
         #print(file_name)
-        #print(url)
-        download(url)
+        print(url)
+        #download(url)
 
 
